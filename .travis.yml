@@ -15,8 +15,8 @@ jobs:
       install: skip
       script: ./gradlew clean build
       before_deploy:
-        - git config --local user.name "castley2@ford.com"
-        - git config --local user.email "castley2@ford.com"
+        - git config --local user.name "Travis CI"
+        - git config --local user.email "travis@example.com"
         - git tag -f $RELEASE_TAG
       deploy:
         provider: releases
@@ -27,7 +27,7 @@ jobs:
       language: bash
       script:
         - echo "Downloading $RELEASE_TAG"
-        - wget -P build/libs https://github.com/$GITHUB_USERNAME/pal-tracker/releases/download/$RELEASE_TAG/pal-tracker.jar
+        - wget -P build/libs https://github.com/castley2/pal-tracker/releases/download/$RELEASE_TAG/pal-tracker.jar
       before_deploy:
         - echo "Deploying $RELEASE_TAG to Cloud Foundry"
       deploy:

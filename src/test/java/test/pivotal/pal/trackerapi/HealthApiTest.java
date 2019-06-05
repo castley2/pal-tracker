@@ -17,34 +17,34 @@ import static com.jayway.jsonpath.JsonPath.parse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-//@RunWith(SpringRunner.class)
-//@SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
+@RunWith(SpringRunner.class)
+@SpringBootTest(classes = PalTrackerApplication.class, webEnvironment = RANDOM_PORT)
 public class HealthApiTest {
 
-//    @LocalServerPort
-//    private String port;
-//    private TestRestTemplate restTemplate;
-//
-//    @Before
-//    public void setUp() throws Exception {
-//        RestTemplateBuilder builder = new RestTemplateBuilder()
-//            .rootUri("http://localhost:" + port)
-//            .basicAuthorization("user", "password");
-//
-//        restTemplate = new TestRestTemplate(builder);
-//    }
-//
-//    @Test
-//    public void healthTest() {
-//        ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
-//
-//
-//        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-//
-//        DocumentContext healthJson = parse(response.getBody());
-//
-//        assertThat(healthJson.read("$.status", String.class)).isEqualTo("UP");
-//        assertThat(healthJson.read("$.details.db.status", String.class)).isEqualTo("UP");
-//        assertThat(healthJson.read("$.details.diskSpace.status", String.class)).isEqualTo("UP");
-//    }
+    @LocalServerPort
+    private String port;
+    private TestRestTemplate restTemplate;
+
+    @Before
+    public void setUp() throws Exception {
+        RestTemplateBuilder builder = new RestTemplateBuilder()
+            .rootUri("http://localhost:" + port)
+            .basicAuthorization("user", "password");
+
+        restTemplate = new TestRestTemplate(builder);
+    }
+
+    @Test
+    public void healthTest() {
+        ResponseEntity<String> response = this.restTemplate.getForEntity("/actuator/health", String.class);
+
+
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+
+        DocumentContext healthJson = parse(response.getBody());
+
+        assertThat(healthJson.read("$.status", String.class)).isEqualTo("UP");
+        assertThat(healthJson.read("$.details.db.status", String.class)).isEqualTo("UP");
+        assertThat(healthJson.read("$.details.diskSpace.status", String.class)).isEqualTo("UP");
+    }
 }

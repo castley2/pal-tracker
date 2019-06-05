@@ -18,7 +18,7 @@ import java.util.TimeZone;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JdbcTimeEntryRepositoryTest {
-    private TimeEntryRepository subject;
+    private TimeEntryRepository timeEntryRepository;
     private JdbcTemplate jdbcTemplate;
 
     @Before
@@ -26,7 +26,7 @@ public class JdbcTimeEntryRepositoryTest {
         MysqlDataSource dataSource = new MysqlDataSource();
         dataSource.setUrl(System.getenv("SPRING_DATASOURCE_URL"));
 
-        subject = new JdbcTimeEntryRepository(dataSource);
+        timeEntryRepository = new JdbcTimeEntryRepository(dataSource);
 
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.execute("DELETE FROM time_entries");
@@ -37,7 +37,7 @@ public class JdbcTimeEntryRepositoryTest {
     @Test
     public void createInsertsATimeEntryRecord() {
         TimeEntry newTimeEntry = new TimeEntry(123, 321, LocalDate.parse("2017-01-09"), 8);
-        TimeEntry entry = subject.create(newTimeEntry);
+        TimeEntry entry = timeEntryRepository.create(newTimeEntry);
 
         Map<String, Object> foundEntry = jdbcTemplate.queryForMap("Select * from time_entries where id = ?", entry.getId());
 
@@ -51,7 +51,7 @@ public class JdbcTimeEntryRepositoryTest {
     @Test
     public void createReturnsTheCreatedTimeEntry() {
         TimeEntry newTimeEntry = new TimeEntry(123, 321, LocalDate.parse("2017-01-09"), 8);
-        TimeEntry entry = subject.create(newTimeEntry);
+        TimeEntry entry = timeEntryRepository.create(newTimeEntry);
 
         assertThat(entry.getId()).isNotNull();
         assertThat(entry.getProjectId()).isEqualTo(123);
@@ -67,7 +67,7 @@ public class JdbcTimeEntryRepositoryTest {
                         "VALUES (999, 123, 321, '2017-01-09', 8)"
         );
 
-        TimeEntry timeEntry = subject.find(999L);
+        TimeEntry timeEntry = timeEntryRepository.find(999L);
 
         assertThat(timeEntry.getId()).isEqualTo(999L);
         assertThat(timeEntry.getProjectId()).isEqualTo(123L);
@@ -78,7 +78,7 @@ public class JdbcTimeEntryRepositoryTest {
 
     @Test
     public void findReturnsNullWhenNotFound() {
-        TimeEntry timeEntry = subject.find(999L);
+        TimeEntry timeEntry = timeEntryRepository.find(999L);
 
         assertThat(timeEntry).isNull();
     }
@@ -90,7 +90,7 @@ public class JdbcTimeEntryRepositoryTest {
                         "VALUES (999, 123, 321, '2017-01-09', 8), (888, 456, 678, '2017-01-08', 9)"
         );
 
-        List<TimeEntry> timeEntries = subject.list();
+        List<TimeEntry> timeEntries = timeEntryRepository.list();
         assertThat(timeEntries.size()).isEqualTo(2);
 
         TimeEntry timeEntry = timeEntries.get(0);
@@ -116,7 +116,7 @@ public class JdbcTimeEntryRepositoryTest {
 
         TimeEntry timeEntryUpdates = new TimeEntry(456, 987, LocalDate.parse("2017-01-10"), 10);
 
-        TimeEntry updatedTimeEntry = subject.update(1000L, timeEntryUpdates);
+        TimeEntry updatedTimeEntry = timeEntryRepository.update(1000L, timeEntryUpdates);
 
         assertThat(updatedTimeEntry.getId()).isEqualTo(1000L);
         assertThat(updatedTimeEntry.getProjectId()).isEqualTo(456L);
@@ -133,7 +133,7 @@ public class JdbcTimeEntryRepositoryTest {
 
         TimeEntry updatedTimeEntry = new TimeEntry(456, 322, LocalDate.parse("2017-01-10"), 10);
 
-        TimeEntry timeEntry = subject.update(1000L, updatedTimeEntry);
+        TimeEntry timeEntry = timeEntryRepository.update(1000L, updatedTimeEntry);
 
         Map<String, Object> foundEntry = jdbcTemplate.queryForMap("Select * from time_entries where id = ?", timeEntry.getId());
 
@@ -151,7 +151,7 @@ public class JdbcTimeEntryRepositoryTest {
                         "VALUES (999, 123, 321, '2017-01-09', 8), (888, 456, 678, '2017-01-08', 9)"
         );
 
-        subject.delete(999L);
+        timeEntryRepository.delete(999L);
 
         Map<String, Object> notFoundEntry = jdbcTemplate.queryForMap("Select count(*) count from time_entries where id = ?", 999);
         assertThat(notFoundEntry.get("count")).isEqualTo(0L);

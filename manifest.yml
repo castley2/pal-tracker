@@ -4,7 +4,7 @@ applications:
   path: build/libs/pal-tracker.jar
 
   routes:
-  - route: pal-tracker-abc123.apps.evans.pal.pivotal.io
+  - route: pal-tracker-abc456.apps.evans.pal.pivotal.io
 
   env:
     WELCOME_MESSAGE: Hello from the review environment

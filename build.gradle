@@ -13,14 +13,17 @@ buildscript {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
     }
 }
-
-
 plugins {
     id "java"
     id "org.flywaydb.flyway" version "5.2.4"
 }
 
 apply plugin: 'org.springframework.boot'
+
+springBoot {
+    buildInfo()
+}
+
 
 repositories {
     mavenCentral()
@@ -31,6 +34,7 @@ dependencies {
     compile("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.9.7")
     compile("org.springframework.boot:spring-boot-starter-jdbc:$springBootVersion")
     compile("mysql:mysql-connector-java:6.0.6")
+    compile("org.springframework.boot:spring-boot-starter-actuator:$springBootVersion")
     testCompile("org.springframework.boot:spring-boot-starter-test:$springBootVersion")
     testCompile("org.mockito:mockito-core:2.23.4")
 
@@ -49,7 +53,10 @@ bootRun.environment([
         "MEMORY_LIMIT": "12G",
         "CF_INSTANCE_INDEX": "34",
         "CF_INSTANCE_ADDR": "123.sesame.street",
-        "SPRING_DATASOURCE_URL": developmentDbUrl])
+        "SPRING_DATASOURCE_URL": developmentDbUrl,
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always"
+])
 
 test.environment([
         "WELCOME_MESSAGE": "Hello from test",
@@ -57,10 +64,11 @@ test.environment([
         "MEMORY_LIMIT": "12G",
         "CF_INSTANCE_INDEX": "34",
         "CF_INSTANCE_ADDR": "123.sesame.street",
-        "SPRING_DATASOURCE_URL": testDbUrl])
+        "SPRING_DATASOURCE_URL": testDbUrl,
+        "MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE": "*",
+        "MANAGEMENT_ENDPOINT_HEALTH_SHOWDETAILS": "always"
 
-
-
+])
 
 flyway {
     url = developmentDbUrl
@@ -72,3 +80,5 @@ flyway {
 task testMigrate(type: FlywayMigrateTask) {
     url = testDbUrl
 }
+
+
